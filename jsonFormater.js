@@ -21,10 +21,17 @@ JsonFormater.prototype = {
         this.bindEvent();
     },
     doFormat: function (json) {
-        var html = "";
+        var html;
+        var obj;
         try {
-            if (json == "") json = "\"\"";
-            var obj = eval("[" + json + "]");
+            if(typeof json == 'object'){
+                obj = [json];
+            }else{
+                if (json == ""){
+                    json = "\"\"";
+                }
+                obj = eval("[" + json + "]");
+            }
             html = this.ProcessObject(obj[0], 0, false, false, false);
             $(this.options.dom).html("<pre class='jf-CodeContainer'>" + html + "</pre>");
             this.isFormated = true;
