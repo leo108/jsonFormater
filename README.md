@@ -39,3 +39,29 @@
 ## 效果图
 
 ![效果图](http://leo108.github.io/jsonFormater/images/demo.png)
+
+## 详细使用方式
+
+### 配置
+
+支持的配置以及默认配置如下:
+
+    {
+        dom: '',          //用于放置的dom的选择器
+        singleTab: "  ",  //单个tab
+        tabSize: 2,       //缩进数量
+        quoteKeys: true,  //key是否用双引号包含
+        imgCollapsed: "images/Collapsed.gif", //收起的图片路径
+        imgExpanded: "images/Expanded.gif",  //展开的图片路径
+        isCollapsible: true //是否支持展开收起
+    }
+
+### 方法
+
+`obj.doFormat(json)`格式化一个json字符串或者js对象
+
+`obj.expandAll()`全部展开
+
+`obj.collapseAll()`全部收起
+
+`obj.collapseLevel(level)`展开到level层
