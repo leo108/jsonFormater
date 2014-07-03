@@ -43,6 +43,7 @@ JsonFormater.prototype = {
     },
     bindEvent: function () {
         var that = this;
+        $(this.options.dom).off('click','.imgToggle');
         $(this.options.dom).on('click', '.imgToggle', function () {
             if (that.isFormated == false) {
                 return;
