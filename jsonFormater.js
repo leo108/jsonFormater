@@ -1,5 +1,4 @@
 function JsonFormatter(opt) {
-    console.log(opt)
     this.options = this.extend({}, {
         dom: '',
         tabSize: 2,
