@@ -1,5 +1,6 @@
 function JsonFormatter(opt) {
-    this.options = Object.assign({
+    console.log(opt)
+    this.options = this.extend({}, {
         dom: '',
         tabSize: 2,
         singleTab: "  ",
@@ -8,6 +9,8 @@ function JsonFormatter(opt) {
         imgExpanded: "images/Expanded.gif",
         isCollapsible: true
     }, opt);
+
+
     this.isFormated = false;
     this.obj = {
         _dateObj: new Date(),
@@ -16,17 +19,17 @@ function JsonFormatter(opt) {
     this.init();
 }
 JsonFormatter.prototype = {
-    init: function () {
+    init: function() {
         this.tab = this.multiplyString(this.options.tabSize, this.options.singleTab);
     },
-    doFormat: function (json) {
+    doFormat: function(json) {
         var html;
         var obj;
         try {
-            if(typeof json == 'object'){
+            if (typeof json == 'object') {
                 obj = [json];
-            }else{
-                if (json == ""){
+            } else {
+                if (json == "") {
                     json = "\"\"";
                 }
                 obj = eval("[" + json + "]");
@@ -41,12 +44,27 @@ JsonFormatter.prototype = {
             this.isFormated = false;
         }
     },
-    bindEvent: function () {
+    extend: function(out) {
+        out = out || {};
+
+        for (var i = 1; i < arguments.length; i++) {
+            if (!arguments[i])
+                continue;
+
+            for (var key in arguments[i]) {
+                if (arguments[i].hasOwnProperty(key))
+                    out[key] = arguments[i][key];
+            }
+        }
+
+        return out;
+    },
+    bindEvent: function() {
         const that = this;
         var elements = document.getElementsByClassName('imgToggle');
-        
-        Array.prototype.forEach.call(elements, function(el, i){
-            el.addEventListener('click', function () {
+
+        Array.prototype.forEach.call(elements, function(el, i) {
+            el.addEventListener('click', function() {
                 if (that.isFormated == false) {
                     return;
                 }
@@ -55,50 +73,50 @@ JsonFormatter.prototype = {
             });
         });
     },
-    expandAll: function () {
+    expandAll: function() {
         if (this.isFormated == false) {
             return;
         }
         var that = this;
-        this.traverseChildren(this.options.dom, function(element){
-            if(element.classList.contains('jf-collapsible')){
+        this.traverseChildren(this.options.dom, function(element) {
+            if (element.classList.contains('jf-collapsible')) {
                 that.makeContentVisible(element, true);
             }
         }, 0);
     },
-    collapseAll: function () {
+    collapseAll: function() {
         if (this.isFormated == false) {
             return;
         }
         var that = this;
-        this.traverseChildren(this.options.dom, function(element){
-            if(element.classList.contains('jf-collapsible')){
+        this.traverseChildren(this.options.dom, function(element) {
+            if (element.classList.contains('jf-collapsible')) {
                 that.makeContentVisible(element, false);
             }
         }, 0);
     },
-    collapseLevel: function(level){
+    collapseLevel: function(level) {
         if (this.isFormated == false) {
             return;
         }
         var that = this;
-        this.traverseChildren(this.options.dom, function(element, depth){
-            if(element.classList.contains('jf-collapsible')){
-                if(depth >= level){
+        this.traverseChildren(this.options.dom, function(element, depth) {
+            if (element.classList.contains('jf-collapsible')) {
+                if (depth >= level) {
                     that.makeContentVisible(element, false);
-                }else{
+                } else {
                     that.makeContentVisible(element, true);
                 }
             }
         }, 0);
 
     },
-    isArray: function (obj) {
-        return  obj &&
+    isArray: function(obj) {
+        return obj &&
             typeof obj === 'object' &&
             typeof obj.length === 'number' && !(obj.propertyIsEnumerable('length'));
     },
-    getRow: function (indent, data, isPropertyContent) {
+    getRow: function(indent, data, isPropertyContent) {
         var tabs = "";
         if (!isPropertyContent) {
             tabs = this.multiplyString(indent, this.tab);
@@ -108,7 +126,7 @@ JsonFormatter.prototype = {
         }
         return tabs + data;
     },
-    formatLiteral: function (literal, quote, comma, indent, isArray, style) {
+    formatLiteral: function(literal, quote, comma, indent, isArray, style) {
         if (typeof literal == 'string') {
             literal = literal.split("<").join("&lt;").split(">").join("&gt;");
         }
@@ -116,7 +134,7 @@ JsonFormatter.prototype = {
         if (isArray) str = this.getRow(indent, str);
         return str;
     },
-    formatFunction: function (indent, obj) {
+    formatFunction: function(indent, obj) {
         var tabs;
         var i;
         var funcStrArray = obj.toString().split("\n");
@@ -127,23 +145,23 @@ JsonFormatter.prototype = {
         }
         return str;
     },
-    multiplyString: function (num, str) {
+    multiplyString: function(num, str) {
         var result = '';
         for (var i = 0; i < num; i++) {
             result += str;
         }
         return result;
     },
-    traverseChildren: function (element, func, depth) {
+    traverseChildren: function(element, func, depth) {
         var length = element.children.length;
         for (var i = 0; i < length; i++) {
             this.traverseChildren(element.children[i], func, depth + 1);
         }
         func(element, depth);
     },
-    makeContentVisible : function(element, visible){
+    makeContentVisible: function(element, visible) {
         var img = element.previousElementSibling.querySelectorAll('img')[0];
-        if(visible){
+        if (visible) {
             element.style.display = '';
             img.setAttribute('src', this.options.imgExpanded);
             img.setAttribute('data-status', 1);
@@ -153,7 +171,7 @@ JsonFormatter.prototype = {
             img.setAttribute('data-status', 0);
         }
     },
-    ProcessObject: function (obj, indent, addComma, isArray, isPropertyContent) {
+    ProcessObject: function(obj, indent, addComma, isArray, isPropertyContent) {
         var html = "";
         var comma = (addComma) ? "<span class='jf-Comma'>,</span> " : "";
         var type = typeof obj;
@@ -195,7 +213,7 @@ JsonFormatter.prototype = {
             html += this.formatLiteral(obj, "", comma, indent, isArray, "Number");
         } else if (type == 'boolean') {
             html += this.formatLiteral(obj, "", comma, indent, isArray, "Boolean");
-        }else if (type == 'undefined') {
+        } else if (type == 'undefined') {
             html += this.formatLiteral("undefined", "", comma, indent, isArray, "Null");
         } else {
             html += this.formatLiteral(obj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, indent, isArray, "String");
