@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>json格式化及高亮</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <meta name="description" content="json,格式化,高亮"/>
     <meta name="keywords" content="json,格式化,高亮"/>
     <script src="jsonFormater.js" type="text/javascript"></script>
@@ -11,14 +12,14 @@
 </head>
 <body>
 <div class="HeadersRow">
-    <div id="HeaderTitle"> JSON格式化及高亮 &nbsp;by&nbsp;<a targe='_blank' href="http://leo108.com/">leo108</a>&nbsp;核心代码参考<a target="_blank" href='http://tmxk.org/c/json/'>天马行空工作室</a></div>
-    <h3 id="HeaderSubTitle">JSON格式化及高亮:</h3>
-    <textarea id="RawJson">{"number":1,"array":[],"null":null,"string":"leo108","boolean":true,"obj":{},"level1":{"level2":{"level3":{"level4":{"level5":{"level6":{"level7":{"level8":{}}}}}}}}}</textarea>
+    <div id="HeaderTitle">JSON formatted and highlighted by <a targe='_blank' href="http://leo108.com/">leo108</a> core code reference <a target="_blank" href='http://tmxk.org/c/json/'>maverick studio</a></div>
+    <h3 id="HeaderSubTitle">JSON formatting and highlighting:</h3>
+    <textarea id="RawJson">[{"link": "https://www.google.com.pk", "count": [14000, 15000 ], "description": {"sensitive": false, "text": "This contains some awesome text."}, "title": "apples"} ]</textarea>
 </div>
 <div id="ControlsRow">
-    <input type="Button" value="格式化" id='format'/>
+    <input type="Button" value="Format Code" id='format'/>
   <span id="TabSizeHolder">
-    缩进量
+    Indentation
     <select id="TabSize">
         <option value="1">1</option>
         <option value="2" selected>2</option>
@@ -30,11 +31,11 @@
   </span>
     <input type="checkbox" id="QuoteKeys" checked='checked' />
     <label for="QuoteKeys">
-        引号
+        Quotation marks
     </label>&nbsp;
       <input type="checkbox" id="CollapsibleView" checked='checked' />
       <label for="CollapsibleView">
-          显示控制
+          The display control
       </label>
   <span id="CollapsibleViewDetail">
     <a href="javascript:void(0);" id="expandAll">展开</a>
@@ -74,13 +75,6 @@
         Array.prototype.forEach.call(x, function(el, i) {
             el.addEventListener('change', function () {
                 format();
-            });
-        });
-        var expand = document.getElementsByClassName('expand');
-        Array.prototype.forEach.call(expand, function(el, i) {
-            el.addEventListener('click', function(e) {
-                var level = e.target.getAttribute('data-level');
-                window.jf.collapseLevel(level);
             });
         });
     })();
