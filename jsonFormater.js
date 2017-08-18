@@ -1,5 +1,5 @@
-function JsonFormater(opt) {
-    this.options = $.extend({
+function JsonFormatter(opt) {
+    this.options = Object.assign({
         dom: '',
         tabSize: 2,
         singleTab: "  ",
@@ -7,7 +7,7 @@ function JsonFormater(opt) {
         imgCollapsed: "images/Collapsed.gif",
         imgExpanded: "images/Expanded.gif",
         isCollapsible: true
-    }, opt || {});
+    }, opt);
     this.isFormated = false;
     this.obj = {
         _dateObj: new Date(),
@@ -15,10 +15,9 @@ function JsonFormater(opt) {
     };
     this.init();
 }
-JsonFormater.prototype = {
+JsonFormatter.prototype = {
     init: function () {
         this.tab = this.multiplyString(this.options.tabSize, this.options.singleTab);
-        this.bindEvent();
     },
     doFormat: function (json) {
         var html;
@@ -33,22 +32,27 @@ JsonFormater.prototype = {
                 obj = eval("[" + json + "]");
             }
             html = this.ProcessObject(obj[0], 0, false, false, false);
-            $(this.options.dom).html("<pre class='jf-CodeContainer'>" + html + "</pre>");
+            this.options.dom.innerHTML = "<pre class='jf-CodeContainer'>" + html + "</pre>";
             this.isFormated = true;
+            this.bindEvent();
         } catch (e) {
             alert("JSON数据格式不正确:\n" + e.message);
-            $(this.options.dom).html("");
+            this.options.dom.innerHTML = ''
             this.isFormated = false;
         }
     },
     bindEvent: function () {
-        var that = this;
-        $(this.options.dom).off('click','.imgToggle');
-        $(this.options.dom).on('click', '.imgToggle', function () {
-            if (that.isFormated == false) {
-                return;
-            }
-            that.makeContentVisible($(this).parent().next(), !$(this).data('status'));
+        const that = this;
+        var elements = document.getElementsByClassName('imgToggle');
+        
+        Array.prototype.forEach.call(elements, function(el, i){
+            el.addEventListener('click', function () {
+                if (that.isFormated == false) {
+                    return;
+                }
+
+                that.makeContentVisible(this.parentNode.nextElementSibling, !parseInt(this.getAttribute('data-status')));
+            });
         });
     },
     expandAll: function () {
@@ -56,8 +60,8 @@ JsonFormater.prototype = {
             return;
         }
         var that = this;
-        this.traverseChildren($(this.options.dom), function(element){
-            if(element.hasClass('jf-collapsible')){
+        this.traverseChildren(this.options.dom, function(element){
+            if(element.classList.contains('jf-collapsible')){
                 that.makeContentVisible(element, true);
             }
         }, 0);
@@ -67,8 +71,8 @@ JsonFormater.prototype = {
             return;
         }
         var that = this;
-        this.traverseChildren($(this.options.dom), function(element){
-            if(element.hasClass('jf-collapsible')){
+        this.traverseChildren(this.options.dom, function(element){
+            if(element.classList.contains('jf-collapsible')){
                 that.makeContentVisible(element, false);
             }
         }, 0);
@@ -78,8 +82,8 @@ JsonFormater.prototype = {
             return;
         }
         var that = this;
-        this.traverseChildren($(this.options.dom), function(element, depth){
-            if(element.hasClass('jf-collapsible')){
+        this.traverseChildren(this.options.dom, function(element, depth){
+            if(element.classList.contains('jf-collapsible')){
                 if(depth >= level){
                     that.makeContentVisible(element, false);
                 }else{
@@ -131,22 +135,22 @@ JsonFormater.prototype = {
         return result;
     },
     traverseChildren: function (element, func, depth) {
-        var length = element.children().length;
+        var length = element.children.length;
         for (var i = 0; i < length; i++) {
-            this.traverseChildren(element.children().eq(i), func, depth + 1);
+            this.traverseChildren(element.children[i], func, depth + 1);
         }
         func(element, depth);
     },
     makeContentVisible : function(element, visible){
-        var img = element.prev().find('img');
+        var img = element.previousElementSibling.querySelectorAll('img')[0];
         if(visible){
-            element.show();
-            img.attr('src', this.options.imgExpanded);
-            img.data('status', 1);
-        }else{
-            element.hide();
-            img.attr('src', this.options.imgCollapsed);
-            img.data('status', 0);
+            element.style.display = '';
+            img.setAttribute('src', this.options.imgExpanded);
+            img.setAttribute('data-status', 1);
+        } else {
+            element.style.display = 'none';
+            img.setAttribute('src', this.options.imgCollapsed);
+            img.setAttribute('data-status', 0);
         }
     },
     ProcessObject: function (obj, indent, addComma, isArray, isPropertyContent) {

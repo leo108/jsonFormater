@@ -5,7 +5,6 @@
     <title>json格式化及高亮</title>
     <meta name="description" content="json,格式化,高亮"/>
     <meta name="keywords" content="json,格式化,高亮"/>
-    <script src="http://runjs.cn/js/sandbox/jquery/jquery-1.8.2.min.js" type="text/javascript"></script>
     <script src="jsonFormater.js" type="text/javascript"></script>
     <link href="jsonFormater.css" type="text/css" rel="stylesheet"/>
     <link href="demo.css" type="text/css" rel="stylesheet"/>
@@ -51,34 +50,40 @@
 </div>
 <div id="Canvas" class="Canvas"></div>
 <script type="application/javascript">
-    $(document).ready(function () {
+    (function () {
         var format = function () {
             var options = {
-                dom: '#Canvas',
-                isCollapsible: $('#CollapsibleView').prop('checked'),
-                quoteKeys: $('#QuoteKeys').prop('checked'),
-                tabSize: $('#TabSize').val()
+                dom: document.getElementById('Canvas'),
+                isCollapsible: document.getElementById('CollapsibleView').checked,
+                quoteKeys: document.getElementById('QuoteKeys').checked,
+                tabSize: document.getElementById('TabSize').value
             };
-            window.jf = new JsonFormater(options);
-            jf.doFormat($('#RawJson').val());
+            window.jf = new JsonFormatter(options);
+            jf.doFormat(document.getElementById('RawJson').value);
         };
-        $('#format').click(function () {
+        document.getElementById('format').addEventListener('click', function() {
             format();
         });
-        $('#expandAll').click(function () {
+        document.getElementById('expandAll').addEventListener('click', function() {
             window.jf.expandAll();
         });
-        $('#collapseAll').click(function () {
+        document.getElementById('collapseAll').addEventListener('click', function() {
             window.jf.collapseAll();
         });
-        $('#TabSize, #CollapsibleView, #QuoteKeys').change(function () {
-            format();
+        var x = document.querySelectorAll('#TabSize, #CollapsibleView, #QuoteKeys');
+        Array.prototype.forEach.call(x, function(el, i) {
+            el.addEventListener('change', function () {
+                format();
+            });
         });
-        $('.expand').click(function () {
-            var level = $(this).data('level');
-            window.jf.collapseLevel(level);
+        var expand = document.getElementsByClassName('expand');
+        Array.prototype.forEach.call(expand, function(el, i) {
+            el.addEventListener('click', function(e) {
+                var level = e.target.getAttribute('data-level');
+                window.jf.collapseLevel(level);
+            });
         });
-    });
+    })();
 </script>
 </body>
 </html>
